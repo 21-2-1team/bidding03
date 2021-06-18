@@ -36,8 +36,6 @@
 입찰관리 – BiddingManagement
 입찰참여 - BiddingParticipation
 입찰심사 - BiddingExamination
-문자전송이력 - Notification
-입찰현황조회 - MyPage
 ```
 
 
@@ -724,18 +722,17 @@ kubectl get all -n kafka
 설치 후 서비스 재기동
 
 ## Autoscale (HPA)
-OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+앞서 CB(Circuit breaker)는 시스템을 안정되게 운영할 수 있게 해줬지만 사용자의 요청을 100% 받아들여주지 못했기 때문에 이에 대한 보완책으로 자동화된 확장 기능을 적용하고자 한다.
 
 - 리소스에 대한 사용량 정의(bidding/BiddingManagement/kubernetes/deployment.yml)
 ![image](https://user-images.githubusercontent.com/70736001/122503960-49cd4c00-d034-11eb-8ab4-b322e7383cc0.png)
 
-- Autoscale 설정
-OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+- Autoscale 설정 (request값의 20%를 넘어서면 Replica를 10개까지 동적으로 확장)
 ```
 kubectl autoscale deployment biddingmanagement --cpu-percent=20 --min=1 --max=10
 ```
 
-- siege 생성
+- siege 생성 (로드제너레이터 설치)
 ```
 kubectl apply -f - <<EOF
 apiVersion: v1
@@ -749,15 +746,17 @@ spec:
     image: apexacme/siege-nginx
 EOF
 ```
-- 부하발생
+- 부하발생 (50명 동시사용자, 30초간 부하)
 ```
 kubectl exec -it pod/siege  -c siege -n bidding -- /bin/bash
 siege -c50 -t30S -v --content-type "application/json" 'http://52.231.8.61:8080/biddingManagements POST {"noticeNo":1,"title":"AAA"}'
 ```
-- 시스템 부하 발생에 대한 결과 확인
+- 모니처링 (부하증가로 스케일아웃되어지는 과정을 별도 창에서 모니터링)
 ```
 watch kubectl get al
 ```
+- 자동스케일아웃으로 Availablity 100% 결과 확인 (시간이 좀 흐른 후 스케일 아웃이 벌어지는 것을 확인, siege의 로그를 보아도 전체적인 성공률이 높아진 것을 확인함)
+
 1.테스트전
 
 ![image](https://user-images.githubusercontent.com/70736001/122504322-0aebc600-d035-11eb-883f-35110d9d0457.png)
@@ -808,8 +807,9 @@ kubectl get pod
 
 
 ## Zero-Downtime deploy (Readiness Probe)
-OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
-- deployment.yml에 정상 적용되어 있는 readinessProbe
+쿠버네티스는 각 컨테이너의 상태를 주기적으로 체크(Health Check)해서 문제가 있는 컨테이너는 서비스에서 제외한다.
+
+- deployment.yml에 readinessProbe 설정 후 미설정 상태를 위해 주석처리 
 ```
 readinessProbe:
 httpGet:
@@ -821,7 +821,7 @@ periodSeconds: 5
 failureThreshold: 10
 ```
 
-- Readness 적용 전 테스트 (deployment.yml에서 readiness 설정 제거 후 (주석처리), 배포중 siege 테스트 진행)
+- deployment.yml에서 readinessProbe 미설정 상태로 siege 부하발생
 
 ![image](https://user-images.githubusercontent.com/70736001/122505873-2906f580-d038-11eb-86b8-2f8388f82dd1.png)
 
@@ -841,13 +841,12 @@ siege -c100 -t5S -v --content-type "application/json" 'http://20.194.120.4:8080/
 
 ![image](https://user-images.githubusercontent.com/70736001/122506129-a03c8980-d038-11eb-8822-5ec57926b900.png)
 
-- biddingmanagement가 배포되는 중,정상 실행중인 biddingmanagement으로의 요청은 성공(201),배포중인 biddingmanagement으로의 요청은 실패(503 - Service Unavailable) 확인
+- 정상 실행중인 biddingmanagement으로의 요청은 성공(201),배포중인 biddingmanagement으로의 요청은 실패(503 - Service Unavailable) 확인
 hpa 설정은 아래와 같이 되어 있다고 전제
 kubectl autoscale deployment biddingmanagement --cpu-percent=20 --min=1 --max=10
 - hpa 설정에 의해 target 지수 초과하여 biddingmanagement scale-out 진행됨
 
-
-- Readness 적용 후 테스트(deployment.yml에서 readiness 설정 제거 후 (주석처리), 배포중 siege 테스트 진행)
+- deployment.yml에 readinessProbe 설정 후 부하발생 및 Availability 100% 확인
 
 ![image](https://user-images.githubusercontent.com/70736001/122506358-2527a300-d039-11eb-84cb-62eb09687bda.png)
 
@@ -865,9 +864,10 @@ kubectl autoscale deployment biddingmanagement --cpu-percent=20 --min=1 --max=10
 
 
 ## Self-healing (Liveness Probe)
-Yaml 파일에 LivenessProbe 설정을 적용
+쿠버네티스는 각 컨테이너의 상태를 주기적으로 체크(Health Check)해서 문제가 있는 컨테이너는 자동으로재시작한다.
 
-- depolyment.yml(BiddingManagement/kubernetes/deployment.yml)
+- depolyment.yml 파일의 path 및 port를 잘못된 값으로 변경
+  depolyment.yml(BiddingManagement/kubernetes/deployment.yml)
 ```
  livenessProbe:
     httpGet:
@@ -879,7 +879,8 @@ Yaml 파일에 LivenessProbe 설정을 적용
       failureThreshold: 5
 ```
 
--  deployment.yml에서 liveness 설정 추가 후 잘못된 정보로 URL 정보로 설정 시 프로세스 리스타트 테스트
+- Retry 시도 확인 (pod 생성 "RESTARTS" 숫자가 늘어나는 것을 확인) 
+
 
 ![image](https://user-images.githubusercontent.com/70736001/122506714-d75f6a80-d039-11eb-8bd0-223490797b58.png)
 
