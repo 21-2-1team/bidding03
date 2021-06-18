@@ -539,3 +539,25 @@ http PATCH http://localhost:8083/biddingExaminations/2 noticeNo=n33 participateN
 http localhost:8081/biddingManagements/2     # 낙찰업체명 갱신됨 확인
 
 ```
+# 운영:
+
+OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+
+## Deploy
+
+- OOOOOOOOO
+```
+OOOOOOOOOOO
+```
+
+## Autoscale (HPA)
+
+## Config Map
+
+## Zero-Downtime deploy (Readiness Probe)
+
+## Autoscale (HPA)
+
+## Self-healing (Liveness Probe)
+
+## Circuit Breaker
