@@ -545,9 +545,35 @@ OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 
 ## Deploy
 
-- OOOOOOOOO
+- GitHub 와 연결 후 로컬빌드를 진행 진행
 ```
-OOOOOOOOOOO
+	cd team
+	mkdir sourcecode
+	cd sourcecode
+	git clone --recurse-submodules https://github.com/21-2-1team/bidding03.git
+	
+	cd bidding
+	cd BiddingExamination
+	mvn package
+	
+	cd ../BiddingManagement
+	mvn package
+	
+	cd ../BiddingParticipation
+	mvn package
+	
+	cd ../MyPage
+	mvn package
+	
+	
+	cd ../Notification
+	mvn package
+	
+	
+	cd ../gateway
+        mvn package
+```
+- GitHub 와 연결 후 로컬빌드를 진행 진행
 ```
 
 ## Autoscale (HPA)
