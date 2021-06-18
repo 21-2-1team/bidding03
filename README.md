@@ -841,7 +841,7 @@ siege -c100 -t5S -v --content-type "application/json" 'http://20.194.120.4:8080/
 
 ![image](https://user-images.githubusercontent.com/70736001/122506129-a03c8980-d038-11eb-8822-5ec57926b900.png)
 
-- 정상 실행중인 biddingmanagement으로의 요청은 성공(201),실패(503 - Service Unavailable) 확인
+- 정상 실행중인 biddingmanagement으로의 요청은 성공(201),비정상 적인 요청은 실패(503 - Service Unavailable) 확인
 
 - hpa 설정에 의해 target 지수 초과하여 biddingmanagement scale-out 진행됨
 
@@ -857,7 +857,7 @@ siege -c100 -t5S -v --content-type "application/json" 'http://20.194.120.4:8080/
 
 ![image](https://user-images.githubusercontent.com/70736001/122506421-4be5d980-d039-11eb-92a2-44e7827299bf.png)
 
-3.생성중인 Pod 에 대한 요청이 들어가 오류발생
+3.readiness 정상 적용 후, Availability 100% 확인
 
 ![image](https://user-images.githubusercontent.com/70736001/122506471-61f39a00-d039-11eb-9077-608f375e27f3.png)
 
