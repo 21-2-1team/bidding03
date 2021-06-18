@@ -393,7 +393,7 @@ public interface BiddingManagementRepository extends PagingAndSortingRepository<
 
 분석단계에서의 조건 중 하나로 심사결과등록(입찰심사)->낙찰자정보등록(입찰관리) 간의 호출은 동기식 일관성을 유지하는 트랜잭션으로 처리하기로 하였다. 호출 프로토콜은 이미 앞서 Rest Repository 에 의해 노출되어있는 REST 서비스를 FeignClient 를 이용하여 호출하도록 한다. 
 
-- 1. (동기호출-Req)낙찰자정보 등록 서비스를 호출하기 위하여 Stub과 (FeignClient) 를 이용하여 Service 대행 인터페이스 (Proxy) 를 구현 
+- (동기호출-Req)낙찰자정보 등록 서비스를 호출하기 위하여 Stub과 (FeignClient) 를 이용하여 Service 대행 인터페이스 (Proxy) 를 구현 
 ```
 # (BiddingExamination) BiddingManagementService.java
 package bidding.external;
@@ -408,7 +408,7 @@ public interface BiddingManagementService {
 }
 ```
 
-- 2-1. (Fallback) 낙찰자정보 등록 서비스가 정상적으로 호출되지 않을 경우 Fallback 처리
+- (Fallback) 낙찰자정보 등록 서비스가 정상적으로 호출되지 않을 경우 Fallback 처리
 ```
 # (BiddingExamination) BiddingManagementServiceFallback.java
 package bidding.external;
@@ -432,7 +432,7 @@ feign:
     enabled: true
 ```
 
-- 2-2. (동기호출-Res) 낙찰자자정보 등록 서비스 (정상 호출)
+- (동기호출-Res) 낙찰자자정보 등록 서비스 (정상 호출)
 ```
 # (BiddingManagement) BiddingManagementController.java
 package bidding;
@@ -468,7 +468,7 @@ package bidding;
  }
 ```
 
-- 3. (동기호출-PostUpdate) 심사결과가 등록된 직후(@PostUpdate) 낙찰자정보 등록을 요청하도록 처리 (낙찰자가 아닌 경우, 이후 로직 스킵)
+- (동기호출-PostUpdate) 심사결과가 등록된 직후(@PostUpdate) 낙찰자정보 등록을 요청하도록 처리 (낙찰자가 아닌 경우, 이후 로직 스킵)
 ```
 # BiddingExamination.java (Entity)
 
@@ -518,7 +518,7 @@ http PATCH http://localhost:8083/biddingExaminations/1 noticeNo=n01 participateN
 
 입찰공고가 등록된 후에 입찰참여 시스템에 알려주는 행위는 동기식이 아니라 비 동기식으로 처리하여 입찰참여 시스템의 처리를 위하여 입찰공고 트랜잭션이 블로킹 되지 않도록 처리한다.
  
-- (Pulish) 이를 위하여 입찰공고 기록을 남긴 후에 곧바로 등록 되었다는 도메인 이벤트를 카프카로 송출한다(Publish)
+- (Publish) 이를 위하여 입찰공고 기록을 남긴 후에 곧바로 등록 되었다는 도메인 이벤트를 카프카로 송출한다(Publish)
  
 ```
 @Entity
@@ -553,7 +553,7 @@ public class PolicyHandler{
     }
 
 ```
-- (Subscribe) 입찰참여 서비스에서는 입찰공고가 취소됨 이벤트를 수신하면 입찰참여 정보를 삭제하는 정책을 처리하도록 PolicyHandler를 구현한다:
+- (Subscribe-취소) 입찰참여 서비스에서는 입찰공고가 취소됨 이벤트를 수신하면 입찰참여 정보를 삭제하는 정책을 처리하도록 PolicyHandler를 구현한다:
   
 ```
 @Service
@@ -595,8 +595,8 @@ http PATCH http://localhost:8083/biddingExaminations/2 noticeNo=n33 participateN
 
 #입찰관리에서 낙찰업체명 갱신 여부 확인
 http localhost:8081/biddingManagements/2     # 낙찰업체명 갱신됨 확인
-
 ```
+
 # 운영:
 
 OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
