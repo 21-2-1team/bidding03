@@ -1,5 +1,3 @@
-![00  표지](https://user-images.githubusercontent.com/84000922/122162379-748d9800-ceae-11eb-9825-9472c08d9cc1.png)
-
 ![image](https://user-images.githubusercontent.com/70736001/122499258-8ba5c480-d02b-11eb-987b-b097b2d87107.png)
 
 # 서비스 시나리오
