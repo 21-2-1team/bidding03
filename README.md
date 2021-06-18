@@ -631,8 +631,76 @@ OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 	cd ../gateway
         mvn package
 ```
-- GitHub 와 연결 후 로컬빌드를 진행 진행
+- namespace 등록 및 변경
 ```
+kubectl config set-context --current --namespace=bidding  --> bidding namespace 로 변경
+
+kubectl create ns bidding
+```
+
+- ACR Build 등록
+```
+az acr build --registry user01skccacr --image user01skccacr.azurecr.io/biddingexamination:latest .
+```
+![image](https://user-images.githubusercontent.com/70736001/122502677-096cce80-d032-11eb-96e7-84a8024ab45d.png)
+
+나머지 프로세스에 대해서도 동일하게 등록을 진행함
+```
+az acr build --registry user01skccacr --image user01skccacr.azurecr.io/biddingmanagement:latest .
+az acr build --registry user01skccacr --image user01skccacr.azurecr.io/biddingparticipation:latest .
+az acr build --registry user01skccacr --image user01skccacr.azurecr.io/biddingparticipation:latest .
+az acr build --registry user01skccacr --image user01skccacr.azurecr.io/mypage:latest  .
+az acr build --registry user01skccacr --image user01skccacr.azurecr.io/notification:latest  .
+az acr build --registry user01skccacr --image user01skccacr.azurecr.io/gateway:latest .
+```
+
+- 배포진행
+1.bidding/BiddingExamination/kubernetes/deployment.yml 파일 수정 (BiddingManagement/BiddingParticipation/MyPage/Notification/gateway 동일)
+![image](https://user-images.githubusercontent.com/70736001/122503045-b0ea0100-d032-11eb-8cb0-7fb906d5d939.png)
+
+2.bidding/BiddingExamination/kubernetes/service.yaml 파일 수정 (BiddingManagement/BiddingParticipation/MyPage/Notification 동일)
+![image](https://user-images.githubusercontent.com/70736001/122503096-c6f7c180-d032-11eb-93ff-8199c74fbb64.png)
+
+3.bidding/gateway/kubernetes/service.yaml 파일 수정
+
+![image](https://user-images.githubusercontent.com/70736001/122503123-da0a9180-d032-11eb-9283-224d7860c9c3.png)
+
+4. 배포작업 수행
+``` 
+	cd gateway/kubernetes
+	kubectl apply -f deployment.yml
+	kubectl apply -f service.yaml
+	
+	cd ../../BiddingExamination/kubernetes
+	kubectl apply -f deployment.yml
+	kubectl apply -f service.yaml
+	
+	cd ../../BiddingManagement/kubernetes
+	kubectl apply -f deployment.yml
+	kubectl apply -f service.yaml
+	
+	
+	cd ../../BiddingParticipation/kubernetes
+	kubectl apply -f deployment.yml
+	kubectl apply -f service.yaml
+	
+	
+	cd ../../MyPage/kubernetes
+	kubectl apply -f deployment.yml
+	kubectl apply -f service.yaml
+	
+	
+	cd ../../Notification/kubernetes
+	kubectl apply -f deployment.yml
+	kubectl apply -f service.yaml
+``` 
+
+5. 배포결과 확인
+``` 
+kubectl get all
+``` 
+![image](https://user-images.githubusercontent.com/70736001/122503307-2b1a8580-d033-11eb-83fc-63b0f2154e3b.png)
+
 
 ## Autoscale (HPA)
 
@@ -645,3 +713,4 @@ OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 ## Self-healing (Liveness Probe)
 
 ## Circuit Breaker
+
