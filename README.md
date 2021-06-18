@@ -1,44 +1,5 @@
 ![image](https://user-images.githubusercontent.com/70736001/122499258-8ba5c480-d02b-11eb-987b-b097b2d87107.png)
 
-### Repositories
-
-- https://github.com/21-2-1team/bidding03.git
-
-
-
-### Table of contents
-
-- [서비스 시나리오](#서비스 시나리오)
-  - [기능적 요구사항](# 기능적 요구 사항)
-
-  - [비기능적 요구사항](# 비기능적 요구 사항)
-
-  - [Microservice명](# Microservice명)
-
-- [분석/설계](# 분석/설계)
-
-- [구현](# 구현)
-  - [DDD 의 적용](# DDD 의 적용 )
-
-  - [폴리글랏 퍼시스턴스](# 폴리글랏 퍼시스턴스) 
-
-  - [동기식 호출 과 Fallback 처리](# 동기식 호출 과 Fallback 처리) 
-
-  - [비동기식 호출 / 시간적 디커플링 / 장애격리 / 최종 (Eventual) 일관성 테스트](# 비동기식 호출 / 시간적 디커플링 / 장애격리 / 최종 (Eventual) 일관성 테스트) 
-
-- [운영](# 운영)
-  - [Deploy](# Deploy) 
-
-  - [Autoscale (HPA)](# Autoscale (HPA))
-
-  - [Config Map](# Config Map) 
-
-  - [Zero-Downtime deploy (Readiness Probe)](# Zero-Downtime deploy (Readiness Probe)) 
-
-  - [Self-healing (Liveness Probe)](# Self-healing (Liveness Probe)) 
-
-  - [Circuit Breaker](# Circuit Breaker)
-
 
 
 # 서비스 시나리오
@@ -944,7 +905,7 @@ siege -c100 -t5S -v --content-type "application/json" 'http://20.194.120.4:8080/
 
 
 - Hystrix 를 설정: 요청처리 쓰레드에서 처리시간이 1000ms가 넘어서기 시작하면 CB 작동하도록 설정
-# application.yml (BiddingExamination)
+  - application.yml (BiddingExamination)
 ```
 feign:
   hystrix:
