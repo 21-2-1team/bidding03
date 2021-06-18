@@ -701,16 +701,114 @@ kubectl get all
 ``` 
 ![image](https://user-images.githubusercontent.com/70736001/122503307-2b1a8580-d033-11eb-83fc-63b0f2154e3b.png)
 
+- Kafka 설치
+``` 
+curl https://raw.githubusercontent.com/helm/helm/master/scripts/get > get_helm.sh
+chmod 700 get_helm.sh
+./get_helm.sh
+
+kubectl --namespace kube-system create sa tiller 
+kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
+helm init --service-account tiller
+
+helm repo add incubator https://charts.helm.sh/incubator
+helm repo update
+
+kubectl create ns kafka
+helm install --name my-kafka --namespace kafka incubator/kafka
+
+kubectl get all -n kafka
+``` 
+설치 후 서비스 재기동
 
 ## Autoscale (HPA)
+OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+
+- 리소스에 대한 사용량 정의(bidding/BiddingManagement/kubernetes/deployment.yml)
+![image](https://user-images.githubusercontent.com/70736001/122503960-49cd4c00-d034-11eb-8ab4-b322e7383cc0.png)
+
+- Autoscale 설정
+OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+```
+kubectl autoscale deployment biddingmanagement --cpu-percent=20 --min=1 --max=10
+```
+
+- siege 생성
+```
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Pod
+metadata:
+  name: siege
+  namespace: bidding
+spec:
+  containers:
+  - name: siege
+    image: apexacme/siege-nginx
+EOF
+```
+- 부하발생
+```
+kubectl exec -it pod/siege  -c siege -n bidding -- /bin/bash
+siege -c50 -t30S -v --content-type "application/json" 'http://52.231.8.61:8080/biddingManagements POST {"noticeNo":1,"title":"AAA"}'
+```
+- 시스템 부하 발생에 대한 결과 확인
+```
+watch kubectl get al
+```
+1.테스트전
+
+![image](https://user-images.githubusercontent.com/70736001/122504322-0aebc600-d035-11eb-883f-35110d9d0457.png)
+
+2.테스트후
+
+![image](https://user-images.githubusercontent.com/70736001/122504349-1e972c80-d035-11eb-814e-a5ab909215c4.png)
+
+3.부하발생 결과
+
+![image](https://user-images.githubusercontent.com/70736001/122504389-31a9fc80-d035-11eb-976e-f43261d1a8c2.png)
 
 ## Config Map
+OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+
+- 파일 수정
+
+![image](https://user-images.githubusercontent.com/70736001/122505096-9dd93000-d036-11eb-91b7-0ec57b6e1b10.png)
+
+- Yaml 파일 수정
+
+![image](https://user-images.githubusercontent.com/70736001/122505177-c5c89380-d036-11eb-91b3-f399547b50ff.png)
+
+- Config Map 생성 및 생성 확인
+```
+kubectl create configmap bidding-cm --from-literal=url=BiddingManagement
+kubectl get cm
+```
+
+![image](https://user-images.githubusercontent.com/70736001/122505221-dc6eea80-d036-11eb-8757-b97f8d75baff.png)
+
+```
+kubectl get cm bidding-cm -o yaml
+```
+
+![image](https://user-images.githubusercontent.com/70736001/122505270-f6103200-d036-11eb-8c96-513f95448989.png)
+
+```
+kubectl get pod
+```
+
+![image](https://user-images.githubusercontent.com/70736001/122505313-0fb17980-d037-11eb-9b57-c0d14f468a1c.png)
+
 
 ## Zero-Downtime deploy (Readiness Probe)
+OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 
 ## Autoscale (HPA)
+OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 
 ## Self-healing (Liveness Probe)
+OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 
 ## Circuit Breaker
+OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 
