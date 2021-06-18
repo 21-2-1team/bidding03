@@ -400,7 +400,7 @@ Notification(문자알림) 서비스는 문자알림 이력이 많이 쌓일 수
 # (BiddingExamination) BiddingManagementService.java
 package bidding.external;
 
-@FeignClient(name="BiddingManagement", url="http://localhost:8081")
+@FeignClient(name="BiddingManagement", url="http://${api.url.bidding}:8080", fallback=BiddingManagementServiceFallback.class)
 public interface BiddingManagementService {
 
     @RequestMapping(method= RequestMethod.GET, path="/biddingManagements/registSucessBidder")
@@ -460,7 +460,7 @@ http PATCH http://localhost:8083/biddingExaminations/1 noticeNo=n01 participateN
 ## 비동기식 호출 / 시간적 디커플링 / 장애격리 / 최종 (Eventual) 일관성 테스트
 
 
-입찰공고가 등록된 후에 입찰참여 시스템에 알려주는 행위는 동기식이 아니라 비 동기식으로 처리하여 입찰참여 시스템의 처리를 위하여 입찰공고 트랜잭션이 블로킹 되지 않아도록 처리한다.
+입찰공고가 등록된 후에 입찰참여 시스템에 알려주는 행위는 동기식이 아니라 비 동기식으로 처리하여 입찰참여 시스템의 처리를 위하여 입찰공고 트랜잭션이 블로킹 되지 않도록 처리한다.
  
 - 이를 위하여 입찰공고 기록을 남긴 후에 곧바로 등록 되었다는 도메인 이벤트를 카프카로 송출한다(Publish)
  
