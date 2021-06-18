@@ -892,34 +892,40 @@ Yaml 파일에 LivenessProbe 설정을 적용
 ![image](https://user-images.githubusercontent.com/70736001/122506831-0c6bbd00-d03a-11eb-880c-dc8d3e00798f.png)
 
 ## Circuit Breaker
-OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+서킷 브레이킹 프레임워크의 선택: Spring FeignClient + Hystrix 옵션을 사용하여 구현함
+시나리오는 심사결과등록(입찰심사:BiddingExamination)-->낙찰자정보등록(입찰관리:BiddingManagement) 시의 연결을 RESTful Request/Response 로 연동하여 구현이 되어있고, 낙찰자정보등록이 과도할 경우 CB 를 통하여 장애격리.
 
-- OOOOOOOO
-```
-OOOOOOOO
-```
 
-- OOOOOOOO
+- Hystrix 를 설정: 요청처리 쓰레드에서 처리시간이 1000ms가 넘어서기 시작하면 CB 작동하도록 설정
+# application.yml (BiddingExamination)
 ```
-OOOOOOOO
-```
+feign:
+  hystrix:
+    enabled: true
 
-- OOOOOOOO
+hystrix:
+  command:
+    default:
+      execution.isolation.thread.timeoutInMilliseconds: 1000
 ```
-OOOOOOOO
-```
+![image](https://user-images.githubusercontent.com/70736001/122508631-3a9ecc00-d03d-11eb-9bce-a786225df40f.png)
 
-- OOOOOOOO
+- 피호출 서비스(입찰관리:biddingmanagement) 의 임의 부하 처리 - 800ms에서 증감 300ms 정도하여 800~1100 ms 사이에서 발생하도록 처리
+BiddingManagementController.java
 ```
-OOOOOOOO
-```
+req/res를 처리하는 피호출 function에 sleep 추가
 
-- OOOOOOOO
+	try {
+	   Thread.sleep((long) (800 + Math.random() * 300));
+	} catch (InterruptedException e) {
+	   e.printStackTrace();
+	}
 ```
-OOOOOOOO
-```
+![image](https://user-images.githubusercontent.com/70736001/122508689-5609d700-d03d-11eb-9e08-8eadc904d391.png)
 
-- OOOOOOOO
+- req/res 호출하는 위치가 onPostUpdate에 있어 실제로 Data Update가 발생하지 않으면 호출이 되지 않는 문제가 있어 siege를 2개 실행하여 Update가 지속적으로 발생하게 처리 함
 ```
-OOOOOOOO
+siege -c2 –t20S  -v --content-type "application/json" 'http://20.194.120.4:8080/biddingExaminations/1 PATCH {"noticeNo":"n01","participateNo":"p01","successBidderFlag":"true"}'
+siege -c2 –t20S  -v --content-type "application/json" 'http://20.194.120.4:8080/biddingExaminations/1 PATCH {"noticeNo":"n01","participateNo":"p01","successBidderFlag":"false"}'
 ```
+![image](https://user-images.githubusercontent.com/70736001/122508763-7b96e080-d03d-11eb-90f8-8380277cdc17.png)
