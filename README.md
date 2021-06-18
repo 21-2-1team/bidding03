@@ -696,11 +696,14 @@ az acr build --registry user01skccacr --image user01skccacr.azurecr.io/gateway:l
 ```
 
 - 배포진행
+
 1.bidding/BiddingExamination/kubernetes/deployment.yml 파일 수정 (BiddingManagement/BiddingParticipation/MyPage/Notification/gateway 동일)
-![image](https://user-images.githubusercontent.com/70736001/122503045-b0ea0100-d032-11eb-8cb0-7fb906d5d939.png)
+
+![image](https://user-images.githubusercontent.com/70736001/122512566-011d8f00-d044-11eb-8bd5-91d939f7ab1b.png)
 
 2.bidding/BiddingExamination/kubernetes/service.yaml 파일 수정 (BiddingManagement/BiddingParticipation/MyPage/Notification 동일)
-![image](https://user-images.githubusercontent.com/70736001/122503096-c6f7c180-d032-11eb-93ff-8199c74fbb64.png)
+
+![image](https://user-images.githubusercontent.com/70736001/122512673-26aa9880-d044-11eb-8587-38f8cd261326.png)
 
 3.bidding/gateway/kubernetes/service.yaml 파일 수정
 
