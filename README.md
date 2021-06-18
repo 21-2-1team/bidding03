@@ -905,7 +905,7 @@ siege -c100 -t5S -v --content-type "application/json" 'http://20.194.120.4:8080/
 
 
 - Hystrix 를 설정: 요청처리 쓰레드에서 처리시간이 1000ms가 넘어서기 시작하면 CB 작동하도록 설정
-  - application.yml (BiddingExamination)
+**application.yml (BiddingExamination)**
 ```
 feign:
   hystrix:
