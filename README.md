@@ -178,7 +178,7 @@
 
 ### Git Organization / Repositories
 
-![14  Git Organization Repositories](https://user-images.githubusercontent.com/84000922/122162427-83744a80-ceae-11eb-987e-b214c71f4213.png)
+![image](https://user-images.githubusercontent.com/84000959/122510939-6a4fd300-d041-11eb-9be6-a648f3afd85e.png)
 
 
 # 구현:
