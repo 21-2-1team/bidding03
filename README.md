@@ -78,8 +78,9 @@
 입찰관리 – BiddingManagement
 입찰참여 - BiddingParticipation
 입찰심사 - BiddingExamination
+문자알림이력 - Notification
+입찰현황조회 - MyPage
 ```
-
 
 
 # 분석/설계
@@ -220,7 +221,7 @@
 
 ### Git Organization / Repositories
 
-![14  Git Organization Repositories](https://user-images.githubusercontent.com/84000922/122162427-83744a80-ceae-11eb-987e-b214c71f4213.png)
+![image](https://user-images.githubusercontent.com/84000959/122514263-a2a5e000-d046-11eb-8ee9-1e2b53211df7.png)
 
 
 # 구현:
