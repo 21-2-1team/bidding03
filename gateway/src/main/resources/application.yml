@@ -1,0 +1,82 @@
+server:
+  port: 8088
+
+---
+
+spring:
+  profiles: default
+  cloud:
+    gateway:
+      routes:
+        - id: BiddingManagement
+          uri: http://localhost:8081
+          predicates:
+            - Path=/biddingManagements/** 
+        - id: BiddingParticipation
+          uri: http://localhost:8082
+          predicates:
+            - Path=/biddingParticipations/** 
+        - id: BiddingExamination
+          uri: http://localhost:8083
+          predicates:
+            - Path=/biddingExaminations/** 
+        - id: MyPage
+          uri: http://localhost:8084
+          predicates:
+            - Path= /biddingStatusInquiries/**
+        - id: Notification
+          uri: http://localhost:8085
+          predicates:
+            - Path=/smsHistories/** 
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "*"
+            allowedMethods:
+              - "*"
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+
+
+---
+
+spring:
+  profiles: docker
+  cloud:
+    gateway:
+      routes:
+        - id: BiddingManagement
+          uri: http://BiddingManagement:8080
+          predicates:
+            - Path=/biddingManagements/** 
+        - id: BiddingParticipation
+          uri: http://BiddingParticipation:8080
+          predicates:
+            - Path=/biddingParticipations/** 
+        - id: BiddingExamination
+          uri: http://BiddingExamination:8080
+          predicates:
+            - Path=/biddingExaminations/** 
+        - id: MyPage
+          uri: http://MyPage:8080
+          predicates:
+            - Path= /biddingStatusInquiries/**
+        - id: Notification
+          uri: http://Notification:8080
+          predicates:
+            - Path=/smsHistories/** 
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "*"
+            allowedMethods:
+              - "*"
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+
+server:
+  port: 8080

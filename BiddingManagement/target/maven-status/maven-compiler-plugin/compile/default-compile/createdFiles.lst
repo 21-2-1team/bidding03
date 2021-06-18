@@ -1,0 +1,11 @@
+bidding/PolicyHandler.class
+bidding/BiddingManagementController.class
+bidding/config/kafka/KafkaProcessor.class
+bidding/BiddingManagement.class
+bidding/AbstractEvent$1.class
+bidding/NoticeCanceled.class
+bidding/AbstractEvent.class
+bidding/BiddingManagementRepository.class
+bidding/BiddingManagementApplication.class
+bidding/NoticeRegistered.class
+bidding/SuccessBidderRegistered.class

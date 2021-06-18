@@ -1,0 +1,11 @@
+/home/project/team/sourcecode/bidding/BiddingParticipation/src/main/java/bidding/BiddingParticipationRepository.java
+/home/project/team/sourcecode/bidding/BiddingParticipation/src/main/java/bidding/BiddingParticipationController.java
+/home/project/team/sourcecode/bidding/BiddingParticipation/src/main/java/bidding/PolicyHandler.java
+/home/project/team/sourcecode/bidding/BiddingParticipation/src/main/java/bidding/BiddingParticipationCanceled.java
+/home/project/team/sourcecode/bidding/BiddingParticipation/src/main/java/bidding/NoticeCanceled.java
+/home/project/team/sourcecode/bidding/BiddingParticipation/src/main/java/bidding/NoticeRegistered.java
+/home/project/team/sourcecode/bidding/BiddingParticipation/src/main/java/bidding/BiddingParticipated.java
+/home/project/team/sourcecode/bidding/BiddingParticipation/src/main/java/bidding/BiddingParticipationApplication.java
+/home/project/team/sourcecode/bidding/BiddingParticipation/src/main/java/bidding/AbstractEvent.java
+/home/project/team/sourcecode/bidding/BiddingParticipation/src/main/java/bidding/BiddingParticipation.java
+/home/project/team/sourcecode/bidding/BiddingParticipation/src/main/java/bidding/config/kafka/KafkaProcessor.java

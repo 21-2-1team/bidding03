@@ -1,0 +1,12 @@
+/home/project/team/sourcecode/bidding/BiddingExamination/src/main/java/bidding/AbstractEvent.java
+/home/project/team/sourcecode/bidding/BiddingExamination/src/main/java/bidding/PolicyHandler.java
+/home/project/team/sourcecode/bidding/BiddingExamination/src/main/java/bidding/ExaminationResultRegistered.java
+/home/project/team/sourcecode/bidding/BiddingExamination/src/main/java/bidding/BiddingExaminationController.java
+/home/project/team/sourcecode/bidding/BiddingExamination/src/main/java/bidding/external/BiddingManagementService.java
+/home/project/team/sourcecode/bidding/BiddingExamination/src/main/java/bidding/external/BiddingManagement.java
+/home/project/team/sourcecode/bidding/BiddingExamination/src/main/java/bidding/BiddingParticipationCanceled.java
+/home/project/team/sourcecode/bidding/BiddingExamination/src/main/java/bidding/BiddingExamination.java
+/home/project/team/sourcecode/bidding/BiddingExamination/src/main/java/bidding/BiddingParticipated.java
+/home/project/team/sourcecode/bidding/BiddingExamination/src/main/java/bidding/config/kafka/KafkaProcessor.java
+/home/project/team/sourcecode/bidding/BiddingExamination/src/main/java/bidding/BiddingExaminationApplication.java
+/home/project/team/sourcecode/bidding/BiddingExamination/src/main/java/bidding/BiddingExaminationRepository.java

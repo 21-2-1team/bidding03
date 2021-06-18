@@ -1,0 +1,13 @@
+bidding/external/BiddingManagementService.class
+bidding/BiddingExaminationController.class
+bidding/BiddingExaminationApplication.class
+bidding/ExaminationResultRegistered.class
+bidding/BiddingParticipated.class
+bidding/PolicyHandler.class
+bidding/config/kafka/KafkaProcessor.class
+bidding/BiddingExamination.class
+bidding/AbstractEvent$1.class
+bidding/AbstractEvent.class
+bidding/BiddingExaminationRepository.class
+bidding/BiddingParticipationCanceled.class
+bidding/external/BiddingManagement.class

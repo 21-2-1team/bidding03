@@ -1,0 +1,13 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: vs-biddingexamination-network-rule
+  namespace: bidding
+spec:
+  hosts:
+  - biddingexamination
+  http:
+  - route:
+    - destination:
+        host: biddingexamination
+    timeout: 3s

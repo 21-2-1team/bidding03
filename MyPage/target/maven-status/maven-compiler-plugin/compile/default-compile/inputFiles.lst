@@ -1,0 +1,10 @@
+/home/project/team/sourcecode/bidding/MyPage/src/main/java/bidding/BiddingStatusInquiryRepository.java
+/home/project/team/sourcecode/bidding/MyPage/src/main/java/bidding/BiddingParticipationCanceled.java
+/home/project/team/sourcecode/bidding/MyPage/src/main/java/bidding/BiddingStatusInquiryViewHandler.java
+/home/project/team/sourcecode/bidding/MyPage/src/main/java/bidding/BiddingStatusInquiry.java
+/home/project/team/sourcecode/bidding/MyPage/src/main/java/bidding/config/kafka/KafkaProcessor.java
+/home/project/team/sourcecode/bidding/MyPage/src/main/java/bidding/MyPageApplication.java
+/home/project/team/sourcecode/bidding/MyPage/src/main/java/bidding/ExaminationResultRegistered.java
+/home/project/team/sourcecode/bidding/MyPage/src/main/java/bidding/AbstractEvent.java
+/home/project/team/sourcecode/bidding/MyPage/src/main/java/bidding/PolicyHandler.java
+/home/project/team/sourcecode/bidding/MyPage/src/main/java/bidding/BiddingParticipated.java
