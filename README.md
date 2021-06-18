@@ -36,7 +36,7 @@
 입찰관리 – BiddingManagement
 입찰참여 - BiddingParticipation
 입찰심사 - BiddingExamination
-문자이력 - Notification
+문자전송이력 - Notification
 입찰현황조회 - MyPage
 ```
 
