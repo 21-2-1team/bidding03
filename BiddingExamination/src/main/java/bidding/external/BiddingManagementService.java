@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 //@FeignClient(name="BiddingManagement", url="http://BiddingManagement:8080")
-@FeignClient(name="BiddingManagement", url="http://${api.url.bidding}:8080")
+@FeignClient(name="BiddingManagement", url="http://${api.url.bidding}:8080", fallback=BiddingManagementServiceFallback.class)
 public interface BiddingManagementService {
 
     @RequestMapping(method= RequestMethod.GET, path="/biddingManagements/registSucessBidder")
