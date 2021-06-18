@@ -178,7 +178,7 @@
 
 ### Git Organization / Repositories
 
-![image](https://user-images.githubusercontent.com/84000959/122510939-6a4fd300-d041-11eb-9be6-a648f3afd85e.png)
+![14  Git Organization Repositories](https://user-images.githubusercontent.com/84000922/122162427-83744a80-ceae-11eb-987e-b214c71f4213.png)
 
 
 # 구현:
@@ -751,7 +751,7 @@ EOF
 kubectl exec -it pod/siege  -c siege -n bidding -- /bin/bash
 siege -c50 -t30S -v --content-type "application/json" 'http://52.231.8.61:8080/biddingManagements POST {"noticeNo":1,"title":"AAA"}'
 ```
-- 모니처링 (부하증가로 스케일아웃되어지는 과정을 별도 창에서 모니터링)
+- 모니터링 (부하증가로 스케일아웃되어지는 과정을 별도 창에서 모니터링)
 ```
 watch kubectl get al
 ```
@@ -809,7 +809,7 @@ kubectl get pod
 ## Zero-Downtime deploy (Readiness Probe)
 쿠버네티스는 각 컨테이너의 상태를 주기적으로 체크(Health Check)해서 문제가 있는 컨테이너는 서비스에서 제외한다.
 
-- deployment.yml에 readinessProbe 설정 후 미설정 상태를 위해 주석처리 
+- deployment.yml에 readinessProbe 설정 후 미설정 상태 테스트를 위해 주석처리함 
 ```
 readinessProbe:
 httpGet:
@@ -841,9 +841,8 @@ siege -c100 -t5S -v --content-type "application/json" 'http://20.194.120.4:8080/
 
 ![image](https://user-images.githubusercontent.com/70736001/122506129-a03c8980-d038-11eb-8822-5ec57926b900.png)
 
-- 정상 실행중인 biddingmanagement으로의 요청은 성공(201),배포중인 biddingmanagement으로의 요청은 실패(503 - Service Unavailable) 확인
-hpa 설정은 아래와 같이 되어 있다고 전제
-kubectl autoscale deployment biddingmanagement --cpu-percent=20 --min=1 --max=10
+- 정상 실행중인 biddingmanagement으로의 요청은 성공(201),실패(503 - Service Unavailable) 확인
+
 - hpa 설정에 의해 target 지수 초과하여 biddingmanagement scale-out 진행됨
 
 - deployment.yml에 readinessProbe 설정 후 부하발생 및 Availability 100% 확인
@@ -879,12 +878,13 @@ kubectl autoscale deployment biddingmanagement --cpu-percent=20 --min=1 --max=10
       failureThreshold: 5
 ```
 
-- Retry 시도 확인 (pod 생성 "RESTARTS" 숫자가 늘어나는 것을 확인) 
+
 
 
 ![image](https://user-images.githubusercontent.com/70736001/122506714-d75f6a80-d039-11eb-8bd0-223490797b58.png)
 
-- 재배포 후 liveness 설정 적용되어 컨테이너 재시작 되는 것을 확인
+- liveness 설정 적용되어 컨테이너 재시작 되는 것을 확인
+  Retry 시도 확인 (pod 생성 "RESTARTS" 숫자가 늘어나는 것을 확인) 
 
 1.배포 전
 
