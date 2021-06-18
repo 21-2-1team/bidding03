@@ -644,7 +644,7 @@ az acr build --registry user01skccacr --image user01skccacr.azurecr.io/biddingex
 ```
 ![image](https://user-images.githubusercontent.com/70736001/122502677-096cce80-d032-11eb-96e7-84a8024ab45d.png)
 
-나머지 프로세스에 대해서도 동일하게 등록을 진행함
+나머지 서비스에 대해서도 동일하게 등록을 진행함
 ```
 az acr build --registry user01skccacr --image user01skccacr.azurecr.io/biddingmanagement:latest .
 az acr build --registry user01skccacr --image user01skccacr.azurecr.io/biddingparticipation:latest .
