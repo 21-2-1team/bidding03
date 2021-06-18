@@ -392,8 +392,7 @@ Notification(문자알림) 서비스는 문자알림 이력이 많이 쌓일 수
 
 분석단계에서의 조건 중 하나로 심사결과등록(입찰심사)->낙찰자정보등록(입찰관리) 간의 호출은 동기식 일관성을 유지하는 트랜잭션으로 처리하기로 하였다. 호출 프로토콜은 이미 앞서 Rest Repository 에 의해 노출되어있는 REST 서비스를 FeignClient 를 이용하여 호출하도록 한다. 
 
-- 낙찰자정보등록 서비스를 호출하기 위하여 Stub과 (FeignClient) 를 이용하여 Service 대행 인터페이스 (Proxy) 를 구현 
-
+- 1) 낙찰자정보 등록 서비스를 호출하기 위하여 Stub과 (FeignClient) 를 이용하여 Service 대행 인터페이스 (Proxy) 를 구현 
 ```
 # (BiddingExamination) BiddingManagementService.java
 package bidding.external;
@@ -406,10 +405,69 @@ public interface BiddingManagementService {
     @RequestParam("succBidderNm") String succBidderNm, @RequestParam("phoneNumber") String phoneNumber);
 
 }
-
 ```
 
-- 심사결과가 등록된 직후(@PostUpdate) 낙찰자정보 등록을 요청하도록 처리 (낙찰자가 아닌 경우, 이후 로직 스킵)
+- 2-1) 낙찰자정보 등록 서비스가 정상적으로 호출되지 않을 경우 Fallback 처리
+```
+# (BiddingExamination) BiddingManagementServiceFallback.java
+package bidding.external;
+
+import org.springframework.stereotype.Component;
+
+@Component
+public class BiddingManagementServiceFallback implements BiddingManagementService{
+
+    @Override
+    public boolean registSucessBidder(String noticeNo,String succBidderNm, String phoneNumber){
+        System.out.println("★★★★★★★★★★★Circuit breaker has been opened. Fallback returned instead.★★★★★★★★★★★");
+        return false;
+    }
+}
+```
+
+```
+feign:
+  hystrix:
+    enabled: true
+```
+
+- 2-2) 낙찰자자정보 등록 서비스 (정상 호출)
+```
+# (BiddingManagement) BiddingManagementController.java
+package bidding;
+
+ @RestController
+ public class BiddingManagementController {
+
+    @Autowired
+    BiddingManagementRepository biddingManagementRepository;
+
+    @RequestMapping(value = "/biddingManagements/registSucessBidder",
+       method = RequestMethod.GET,
+       produces = "application/json;charset=UTF-8")
+    public boolean registSucessBidder(HttpServletRequest request, HttpServletResponse response) {
+       boolean status = false;
+
+       String noticeNo = String.valueOf(request.getParameter("noticeNo"));
+       
+       BiddingManagement biddingManagement = biddingManagementRepository.findByNoticeNo(noticeNo);
+
+       if(biddingManagement.getDemandOrgNm() == null || "조달청".equals(biddingManagement.getDemandOrgNm()) == false){
+            biddingManagement.setSuccBidderNm(request.getParameter("succBidderNm"));
+            biddingManagement.setPhoneNumber(request.getParameter("phoneNumber"));
+
+            biddingManagementRepository.save(biddingManagement);
+
+            status = true;
+       }
+
+       return status;
+    }
+
+ }
+```
+
+- 3) 심사결과가 등록된 직후(@PostUpdate) 낙찰자정보 등록을 요청하도록 처리 (낙찰자가 아닌 경우, 이후 로직 스킵)
 ```
 # BiddingExamination.java (Entity)
 
