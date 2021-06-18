@@ -183,7 +183,7 @@
 
 # 구현:
 
-분석/설계 단계에서 도출된 헥사고날 아키텍처에 따라, 각 BC별로 대변되는 마이크로 서비스들을 스프링부트 등으로 구현하였다. 구현한 각 서비스를 로컬에서 실행하는 방법은 아래와 같다 (각자의 포트넘버는 8081 ~ 8085, 8088 이다)
+(서비스 별 포트) 분석/설계 단계에서 도출된 헥사고날 아키텍처에 따라, 각 BC별로 대변되는 마이크로 서비스들을 스프링부트 등으로 구현하였다. 구현한 각 서비스를 로컬에서 실행하는 방법은 아래와 같다 (각자의 포트넘버는 8081 ~ 8085, 8088 이다)
 
 ```
 cd BiddingManagement
@@ -207,7 +207,7 @@ mvn spring-boot:run
 
 ## DDD 의 적용
 
-- 각 서비스내에 도출된 핵심 Aggregate Root 객체를 Entity 로 선언하였다: (아래 예시는 입찰관리 마이크로 서비스). 이때 가능한 현업에서 사용하는 언어 (유비쿼터스 랭귀지)를 그대로 사용하려고 노력했다.
+- (Entity Class) 각 서비스내에 도출된 핵심 Aggregate Root 객체를 Entity 로 선언하였다: (아래 예시는 입찰관리 마이크로 서비스). 이때 가능한 현업에서 사용하는 언어 (유비쿼터스 랭귀지)를 그대로 사용하려고 노력했다.
 
 ```
 package bidding;
@@ -329,7 +329,7 @@ public class BiddingManagement {
 
 }
 ```
-- Entity Pattern 과 Repository Pattern 을 적용하여 JPA 를 통하여 다양한 데이터소스 유형 (RDB or NoSQL) 에 대한 별도의 처리가 없도록 데이터 접근 어댑터를 자동 생성하기 위하여 Spring Data REST 의 RestRepository 를 적용하였다
+- (Repository 예시) Entity Pattern 과 Repository Pattern 을 적용하여 JPA 를 통하여 다양한 데이터소스 유형 (RDB or NoSQL) 에 대한 별도의 처리가 없도록 데이터 접근 어댑터를 자동 생성하기 위하여 Spring Data REST 의 RestRepository 를 적용하였다
 ```
 package bidding;
 
@@ -342,6 +342,7 @@ public interface BiddingManagementRepository extends PagingAndSortingRepository<
     BiddingManagement findByNoticeNo(String noticeNo);
 }
 ```
+
 - 적용 후 REST API 의 테스트
 
 ![image](https://user-images.githubusercontent.com/84000959/122253612-47b99f00-cf07-11eb-85c1-bc9736d97ec9.png)
@@ -367,7 +368,7 @@ public interface BiddingManagementRepository extends PagingAndSortingRepository<
 
 ## 폴리글랏 퍼시스턴스
 
-Notification(문자알림) 서비스는 문자알림 이력이 많이 쌓일 수 있으므로 자바로 작성된 관계형 데이터베이스인 HSQLDB를 사용하기로 하였다. 이를 위해 pom.xml 파일에 아래 설정을 추가하였다.
+(H2DB, HSQLDB 사용) Notification(문자알림) 서비스는 문자알림 이력이 많이 쌓일 수 있으므로 자바로 작성된 관계형 데이터베이스인 HSQLDB를 사용하기로 하였다. 이를 위해 pom.xml 파일에 아래 설정을 추가하였다.
 
 ```
 # pom.xml
@@ -392,7 +393,7 @@ Notification(문자알림) 서비스는 문자알림 이력이 많이 쌓일 수
 
 분석단계에서의 조건 중 하나로 심사결과등록(입찰심사)->낙찰자정보등록(입찰관리) 간의 호출은 동기식 일관성을 유지하는 트랜잭션으로 처리하기로 하였다. 호출 프로토콜은 이미 앞서 Rest Repository 에 의해 노출되어있는 REST 서비스를 FeignClient 를 이용하여 호출하도록 한다. 
 
-- 1) 낙찰자정보 등록 서비스를 호출하기 위하여 Stub과 (FeignClient) 를 이용하여 Service 대행 인터페이스 (Proxy) 를 구현 
+- 1. (동기호출-Req)낙찰자정보 등록 서비스를 호출하기 위하여 Stub과 (FeignClient) 를 이용하여 Service 대행 인터페이스 (Proxy) 를 구현 
 ```
 # (BiddingExamination) BiddingManagementService.java
 package bidding.external;
@@ -407,7 +408,7 @@ public interface BiddingManagementService {
 }
 ```
 
-- 2-1) 낙찰자정보 등록 서비스가 정상적으로 호출되지 않을 경우 Fallback 처리
+- 2-1. (Fallback) 낙찰자정보 등록 서비스가 정상적으로 호출되지 않을 경우 Fallback 처리
 ```
 # (BiddingExamination) BiddingManagementServiceFallback.java
 package bidding.external;
@@ -431,7 +432,7 @@ feign:
     enabled: true
 ```
 
-- 2-2) 낙찰자자정보 등록 서비스 (정상 호출)
+- 2-2. (동기호출-Res) 낙찰자자정보 등록 서비스 (정상 호출)
 ```
 # (BiddingManagement) BiddingManagementController.java
 package bidding;
@@ -467,7 +468,7 @@ package bidding;
  }
 ```
 
-- 3) 심사결과가 등록된 직후(@PostUpdate) 낙찰자정보 등록을 요청하도록 처리 (낙찰자가 아닌 경우, 이후 로직 스킵)
+- 3. (동기호출-PostUpdate) 심사결과가 등록된 직후(@PostUpdate) 낙찰자정보 등록을 요청하도록 처리 (낙찰자가 아닌 경우, 이후 로직 스킵)
 ```
 # BiddingExamination.java (Entity)
 
@@ -491,8 +492,7 @@ package bidding;
         }
 ```
 
-- 동기식 호출에서는 호출 시간에 따른 타임 커플링이 발생하며, 입찰관리 시스템이 장애가 나면 입찰심사 등록도 못 한다는 것을 확인:
-
+- (동기호출-테스트) 동기식 호출에서는 호출 시간에 따른 타임 커플링이 발생하며, 입찰관리 시스템이 장애가 나면 입찰심사 등록도 못 한다는 것을 확인:
 
 ```
 # 입찰관리(BiddingManagement) 서비스를 잠시 내려놓음 (ctrl+c)
@@ -518,7 +518,7 @@ http PATCH http://localhost:8083/biddingExaminations/1 noticeNo=n01 participateN
 
 입찰공고가 등록된 후에 입찰참여 시스템에 알려주는 행위는 동기식이 아니라 비 동기식으로 처리하여 입찰참여 시스템의 처리를 위하여 입찰공고 트랜잭션이 블로킹 되지 않도록 처리한다.
  
-- 이를 위하여 입찰공고 기록을 남긴 후에 곧바로 등록 되었다는 도메인 이벤트를 카프카로 송출한다(Publish)
+- (Pulish) 이를 위하여 입찰공고 기록을 남긴 후에 곧바로 등록 되었다는 도메인 이벤트를 카프카로 송출한다(Publish)
  
 ```
 @Entity
@@ -533,7 +533,7 @@ public class BiddingManagement {
         noticeRegistered.publishAfterCommit();
     }
 ```
-- 입찰참여 서비스에서는 입찰공고 등록됨 이벤트를 수신하면 입찰공고 번호를 등록하는 정책을 처리하도록 PolicyHandler를 구현한다:
+- (Subscribe-) 입찰참여 서비스에서는 입찰공고 등록됨 이벤트를 수신하면 입찰공고 번호를 등록하는 정책을 처리하도록 PolicyHandler를 구현한다:
 
 ```
 @Service
@@ -553,7 +553,7 @@ public class PolicyHandler{
     }
 
 ```
-입찰참여 서비스에서는 입찰공고가 취소됨 이벤트를 수신하면 입찰참여 정보를 삭제하는 정책을 처리하도록 PolicyHandler를 구현한다:
+- (Subscribe) 입찰참여 서비스에서는 입찰공고가 취소됨 이벤트를 수신하면 입찰참여 정보를 삭제하는 정책을 처리하도록 PolicyHandler를 구현한다:
   
 ```
 @Service
@@ -574,7 +574,7 @@ public class PolicyHandler{
 
 ```
 
-입찰관리, 입찰참여 시스템은 입찰심사 시스템과 완전히 분리되어 있으며, 이벤트 수신에 따라 처리되기 때문에, 입찰심사 시스템이 유지보수로 인해 잠시 내려간 상태라도 입찰관리, 입찰참여 서비스에 영향이 없다:
+- (장애격리) 입찰관리, 입찰참여 시스템은 입찰심사 시스템과 완전히 분리되어 있으며, 이벤트 수신에 따라 처리되기 때문에, 입찰심사 시스템이 유지보수로 인해 잠시 내려간 상태라도 입찰관리, 입찰참여 서비스에 영향이 없다:
 ```
 # 입찰심사 서비스 (BiddingExamination) 를 잠시 내려놓음 (ctrl+c)
 
