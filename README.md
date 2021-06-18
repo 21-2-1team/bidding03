@@ -802,13 +802,119 @@ kubectl get pod
 
 ## Zero-Downtime deploy (Readiness Probe)
 OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+- deployment.yml에 정상 적용되어 있는 readinessProbe
+```
+readinessProbe:
+httpGet:
+  path: '/biddingManagements'
+  port: 8080
+initialDelaySeconds: 10
+timeoutSeconds: 2
+periodSeconds: 5
+failureThreshold: 10
+```
 
-## Autoscale (HPA)
-OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+- Readness 적용 전 테스트 (deployment.yml에서 readiness 설정 제거 후 (주석처리), 배포중 siege 테스트 진행)
+
+![image](https://user-images.githubusercontent.com/70736001/122505873-2906f580-d038-11eb-86b8-2f8388f82dd1.png)
+
+```
+kubectl exec -it pod/siege  -c siege -n bidding -- /bin/bash
+siege -c100 -t5S -v --content-type "application/json" 'http://20.194.120.4:8080/biddingManagements POST {"noticeNo":1,"title":"AAA"}
+```
+1.부하테스트 전
+
+![image](https://user-images.githubusercontent.com/70736001/122506020-75eacc00-d038-11eb-99df-4a4b90478bc3.png)
+
+2.부하테스트 후
+
+![image](https://user-images.githubusercontent.com/70736001/122506060-84d17e80-d038-11eb-8449-b94b28a0f385.png)
+
+3.생성중인 Pod 에 대한 요청이 들어가 오류발생
+
+![image](https://user-images.githubusercontent.com/70736001/122506129-a03c8980-d038-11eb-8822-5ec57926b900.png)
+
+- biddingmanagement가 배포되는 중,정상 실행중인 biddingmanagement으로의 요청은 성공(201),배포중인 biddingmanagement으로의 요청은 실패(503 - Service Unavailable) 확인
+hpa 설정은 아래와 같이 되어 있다고 전제
+kubectl autoscale deployment biddingmanagement --cpu-percent=20 --min=1 --max=10
+- hpa 설정에 의해 target 지수 초과하여 biddingmanagement scale-out 진행됨
+
+
+- Readness 적용 후 테스트(deployment.yml에서 readiness 설정 제거 후 (주석처리), 배포중 siege 테스트 진행)
+
+![image](https://user-images.githubusercontent.com/70736001/122506358-2527a300-d039-11eb-84cb-62eb09687bda.png)
+
+1.부하테스트 전
+
+![image](https://user-images.githubusercontent.com/70736001/122506400-3c669080-d039-11eb-8e5e-a4f76b0e2956.png)
+
+2.부하테스트 후
+
+![image](https://user-images.githubusercontent.com/70736001/122506421-4be5d980-d039-11eb-92a2-44e7827299bf.png)
+
+3.생성중인 Pod 에 대한 요청이 들어가 오류발생
+
+![image](https://user-images.githubusercontent.com/70736001/122506471-61f39a00-d039-11eb-9077-608f375e27f3.png)
+
 
 ## Self-healing (Liveness Probe)
 OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 
+- deployment.yml에 정상 적용되어 있는 LivenessProbe
+```
+ livenessProbe:
+    httpGet:
+        path: '/biddingmanagement/failed'
+        port: 8090
+      initialDelaySeconds: 30
+      timeoutSeconds: 2
+      periodSeconds: 5
+      failureThreshold: 5
+```
+
+-  deployment.yml에서 liveness 설정 추가 후 잘못된 정보로 URL 정보로 설정 시 프로세스 리스타트 테스트
+
+![image](https://user-images.githubusercontent.com/70736001/122506714-d75f6a80-d039-11eb-8bd0-223490797b58.png)
+
+- 재배포 후 OOOOOOOO
+
+1.배포 전
+
+![image](https://user-images.githubusercontent.com/70736001/122506797-fb22b080-d039-11eb-9a0b-754e0fea45b2.png)
+
+2.배포 후
+
+![image](https://user-images.githubusercontent.com/70736001/122506831-0c6bbd00-d03a-11eb-880c-dc8d3e00798f.png)
+
 ## Circuit Breaker
 OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 
+- OOOOOOOO
+```
+OOOOOOOO
+```
+
+- OOOOOOOO
+```
+OOOOOOOO
+```
+
+- OOOOOOOO
+```
+OOOOOOOO
+```
+
+- OOOOOOOO
+```
+OOOOOOOO
+```
+
+- OOOOOOOO
+```
+OOOOOOOO
+```
+
+- OOOOOOOO
+```
+OOOOOOOO
+```
