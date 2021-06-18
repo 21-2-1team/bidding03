@@ -679,7 +679,7 @@ kubectl config set-context --current --namespace=bidding  --> bidding namespace 
 kubectl create ns bidding
 ```
 
-- ACR Build 등록
+- ACR 컨테이너이미지 빌드
 ```
 az acr build --registry user01skccacr --image user01skccacr.azurecr.io/biddingexamination:latest .
 ```
