@@ -769,13 +769,18 @@ watch kubectl get al
 ![image](https://user-images.githubusercontent.com/70736001/122504389-31a9fc80-d035-11eb-976e-f43261d1a8c2.png)
 
 ## Config Map
-OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+ConfigMap을 사용하여 변경가능성이 있는 설정을 관리
+
+- 입찰심사(BiddingExamination) 서비스에서 동기호출(Req/Res방식)로 연결되는 입찰관리(BiddingManagement) 서비스 url 정보 일부를 ConfigMap을 사용하여 구현
 
 - 파일 수정
+  - 입찰심사 소스 (BiddingExamination/src/main/java/bidding/external/BiddingManagementService.java)
 
 ![image](https://user-images.githubusercontent.com/70736001/122505096-9dd93000-d036-11eb-91b7-0ec57b6e1b10.png)
 
 - Yaml 파일 수정
+  - application.yml (BiddingExamination/src/main/resources/application.yml)
+  - deploy yml (BiddingExamination/kubernetes/deployment.yml)
 
 ![image](https://user-images.githubusercontent.com/70736001/122505177-c5c89380-d036-11eb-91b3-f399547b50ff.png)
 
@@ -858,9 +863,9 @@ kubectl autoscale deployment biddingmanagement --cpu-percent=20 --min=1 --max=10
 
 
 ## Self-healing (Liveness Probe)
-OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+Yaml 파일에 LivenessProbe 설정을 적용
 
-- deployment.yml에 정상 적용되어 있는 LivenessProbe
+- depolyment.yml(BiddingManagement/kubernetes/deployment.yml)
 ```
  livenessProbe:
     httpGet:
@@ -876,7 +881,7 @@ OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 
 ![image](https://user-images.githubusercontent.com/70736001/122506714-d75f6a80-d039-11eb-8bd0-223490797b58.png)
 
-- 재배포 후 OOOOOOOO
+- 재배포 후 liveness 설정 적용되어 컨테이너 재시작 되는 것을 확인
 
 1.배포 전
 
